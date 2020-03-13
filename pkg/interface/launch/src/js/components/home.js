@@ -6,9 +6,7 @@ import classnames from 'classnames';
 import Header from '/components/header';
 import Tile from '/components/tile';
 
-
 export default class Home extends Component {
-
   constructor(props) {
     super(props);
     subscription.subscribe("/main");
@@ -44,6 +42,4 @@ export default class Home extends Component {
       </div>
     );
   }
-
 }
-

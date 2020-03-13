@@ -6,7 +6,7 @@ import SunCalc from 'suncalc'
 const outerSize = 124; //tile size
 const innerSize = 124; //clock size
 
-//polar to cartesian
+// polar to cartesian
 // var ptc = function(r, theta) {
 //   return {
 //     x: r * Math.cos(theta),
@@ -37,18 +37,18 @@ dark.addListener(darkColors);
 
 
 const toRelativeTime = (date, referenceTime, unit) => moment(date)
-  .diff(referenceTime, unit)
+  .diff(referenceTime, unit);
 
 const minsToDegs = (mins) => {
   // 1440 = total minutes in an earth day
-  return (mins / 1440) * 360
-}
+  return (mins / 1440) * 360;
+};
 
-const clockwise = (deg, delta) => deg + delta
+const clockwise = (deg, delta) => deg + delta;
 
-const anticlockwise = (deg, delta) => deg - delta
+const anticlockwise = (deg, delta) => deg - delta;
 
-const splitArc = (start, end) => end + ((start - end) * 0.5)
+const splitArc = (start, end) => end + ((start - end) * 0.5);
 
 const isOdd = n => Math.abs(n % 2) == 1;
 
@@ -57,8 +57,8 @@ const radToDeg = (rad) => rad * (180 / Math.PI);
 const degToRad = (deg) => deg * (Math.PI / 180);
 
 const convert = (date, referenceTime) => {
-  return minsToDegs(toRelativeTime(date, referenceTime, 'minutes'))
-}
+  return minsToDegs(toRelativeTime(date, referenceTime, 'minutes'));
+};
 
 const circle = (ctx, x, y, r, from, to, fill) => {
   ctx.beginPath();
@@ -66,7 +66,7 @@ const circle = (ctx, x, y, r, from, to, fill) => {
   ctx.strokeStyle = 'rgba(0,0,0,0)';
   ctx.fillStyle = fill || 'rgba(0,0,0,0)';
   ctx.fill();
-}
+};
 
 const circleOutline = (ctx, x, y, r, from, to, stroke, lineWidth) => {
   ctx.beginPath();
@@ -75,7 +75,7 @@ const circleOutline = (ctx, x, y, r, from, to, stroke, lineWidth) => {
   ctx.lineWidth = lineWidth;
   ctx.strokeStyle = stroke || 'rgba(0,0,0,0)';
   ctx.stroke();
-}
+};
 
 const arc = (ctx, x, y, r, from, to, fill) => {
   ctx.beginPath();
@@ -84,7 +84,7 @@ const arc = (ctx, x, y, r, from, to, fill) => {
   ctx.lineWidth = r * 2;
   ctx.strokeStyle = fill || 'rgba(0,0,0,0)';
   ctx.stroke();
-}
+};
 
 const degArc = (ctx, x, y, r, from, to, fill) => {
   ctx.beginPath();
@@ -93,17 +93,16 @@ const degArc = (ctx, x, y, r, from, to, fill) => {
   ctx.lineWidth = r * 2;
   ctx.strokeStyle = fill || 'rgba(0,0,0,0)';
   ctx.stroke();
-}
+};
 
 class Clock extends Component {
-
   constructor(props) {
     super(props);
     this.animate = this.animate.bind(this);
     this.canvasRef = React.createRef();
     this.canvas = null;
     this.angle = 0;
-    this.referenceTime = moment().startOf('day').subtract(6, 'hours')
+    this.referenceTime = moment().startOf('day').subtract(6, 'hours');
     this.state = {
       lat: 0,
       lon: 0,
@@ -123,18 +122,17 @@ class Clock extends Component {
       // sunsetStartTime = 1510003982,
       // sunsetEndTime
       // moonPhase = 0.59,
-    }
-
+    };
   }
 
   initGeolocation() {
     if (typeof this.props.data === 'string') {
       // console.log(typeof this.props.data)
-      const latlon = this.props.data.split(',')
-      const lat = latlon[0]
-      const lon = latlon[1]
+      const latlon = this.props.data.split(',');
+      const lat = latlon[0];
+      const lon = latlon[1];
 
-      const suncalc = SunCalc.getTimes(new Date(), lat, lon)
+      const suncalc = SunCalc.getTimes(new Date(), lat, lon);
 
       const convertedSunCalc = {
         sunset: convert(suncalc.sunset, this.referenceTime),
@@ -147,23 +145,22 @@ class Clock extends Component {
         nightEnd: convert(suncalc.nightEnd, this.referenceTime),
         nauticalDawn: convert(suncalc.nauticalDawn, this.referenceTime),
         nauticalDusk: convert(suncalc.nauticalDusk, this.referenceTime),
-      }
+      };
 
       this.setState({
         lat,
         lon,
         ...convertedSunCalc,
         geolocationSuccess: true,
-      })
+      });
     }
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps !== this.props) {
-      this.initGeolocation()
+      this.initGeolocation();
     }
   }
-
 
   componentDidMount() {
     this.canvas = initCanvas(
@@ -172,27 +169,26 @@ class Clock extends Component {
       4
     );
 
-    this.initGeolocation()
-    this.animate()
+    this.initGeolocation();
+    this.animate();
   }
 
-
   animate() {
-    window.setTimeout(() => window.requestAnimationFrame(this.animate), 1000)
+    window.setTimeout(() => window.requestAnimationFrame(this.animate), 1000);
 
-    const { state } = this
+    const { state } = this;
     const time = new Date();
     const ctx = this.canvas.getContext("2d");
     ctx.clearRect(0, 0, ctx.width, ctx.height);
     ctx.save();
 
-    const ctr = innerSize / 2
+    const ctr = innerSize / 2;
 
     // Sun+moon calculations
-    const dd = 4
-    var cx = ctr
-    var cy = ctr
-    this.angle = degToRad(convert(time, this.referenceTime))
+    const dd = 4;
+    var cx = ctr;
+    var cy = ctr;
+    this.angle = degToRad(convert(time, this.referenceTime));
     var newX = cx + (ctr - 15) * Math.cos(this.angle);
     var newY = cy + (ctr - 15) * Math.sin(this.angle);
 
@@ -205,7 +201,7 @@ class Clock extends Component {
       -1,
       2 * Math.PI,
       background
-    )
+    );
 
     // Day
     degArc(
@@ -263,8 +259,8 @@ class Clock extends Component {
     );
 
     if (
-      radToDeg(this.angle) > splitArc(state.sunriseEnd, state.nightEnd)
-      && radToDeg(this.angle) < splitArc(state.sunset, state.night)
+      radToDeg(this.angle) > splitArc(state.sunriseEnd, state.nightEnd) &&
+      radToDeg(this.angle) < splitArc(state.sunset, state.night)
     ) {
       // Sun circle
       circle(
@@ -275,7 +271,7 @@ class Clock extends Component {
         0,
         2 * Math.PI,
         '#FCC440'
-      )
+      );
 
       // Sun circle border
       circleOutline(
@@ -298,7 +294,8 @@ class Clock extends Component {
         0,
         2 * Math.PI,
         '#FFFFFF'
-      )
+      );
+
       // Moon circle outline
       circleOutline(
         ctx,
@@ -356,7 +353,7 @@ class Clock extends Component {
       -1,
       2 * Math.PI,
       background
-    )
+    );
 
     // Center white circle border
     circleOutline(
@@ -373,26 +370,29 @@ class Clock extends Component {
     // Text for time and date
     const timeText = isOdd(time.getSeconds())
       ? moment().format('h mm A')
-      : moment().format('h:mm A')
-    const dateText = moment().format('MMM Do')
-    ctx.textAlign = 'center'
-    ctx.fillStyle = text
-    ctx.font = '12px Inter'
-    ctx.fillText(timeText, ctr, ctr + 6 - 7)
-    ctx.fillStyle = text
-    ctx.font = '12px Inter'
+      : moment().format('h:mm A');
+    const dateText = moment().format('MMM Do');
+    ctx.textAlign = 'center';
+    ctx.fillStyle = text;
+    ctx.font = '12px Inter';
+    ctx.fillText(timeText, ctr, ctr + 6 - 7);
+    ctx.fillStyle = text;
+    ctx.font = '12px Inter';
     ctx.fillText(dateText, ctr, ctr + 6 + 7)
 
     ctx.restore();
   }
 
   render() {
-    return <div style={{position:'relative'}}>
-      <canvas
-      style={{position:'absolute'}}
-      ref={ canvasRef => this.canvasRef = canvasRef }
-      id="clock-canvas"/>
-    </div>
+    return (
+      <div style={{position:'relative'}}>
+        <canvas
+          style={{ position:'absolute' }}
+          ref={ canvasRef => this.canvasRef = canvasRef }
+          id="clock-canvas"
+        />
+      </div>
+    );
   }
 }
 
@@ -417,9 +417,7 @@ export default class ClockTile extends Component {
     return this.renderWrapper((
       <Clock data={data}/>
     ));
-
   }
-
 }
 
 const loadImg = (base64, cb) => new Promise(resolve => {
@@ -450,6 +448,6 @@ const initCanvas = (canvas, size, ratio) => {
   canvas.getContext('2d').scale(ratio, ratio);
 
   return canvas;
-}
+};
 
 window.clockTile = ClockTile;

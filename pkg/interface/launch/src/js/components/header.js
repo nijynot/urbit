@@ -5,7 +5,6 @@ import _ from 'lodash';
 
 export default class Header extends Component {
   render() {
-
     let data = _.get(this.props.data, "invites", false);
     let inviteNum = 0;
 
@@ -76,4 +75,3 @@ export default class Header extends Component {
   }
 
 }
-

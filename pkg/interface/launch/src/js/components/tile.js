@@ -4,7 +4,6 @@ import { api } from '/lib/api';
 import classnames from 'classnames';
 
 export default class Tile extends Component {
-
   constructor(props) {
     super(props);
   }
@@ -24,4 +23,3 @@ export default class Tile extends Component {
   }
 
 }
-
